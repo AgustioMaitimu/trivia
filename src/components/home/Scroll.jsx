@@ -1,6 +1,6 @@
 'use client';
 
-import Image from "next/legacy/image";
+import Image from 'next/legacy/image';
 import React, { useEffect, useState } from 'react';
 
 function Scroll() {
