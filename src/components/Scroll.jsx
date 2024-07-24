@@ -1,34 +1,36 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 function Scroll() {
   const [hidden, setHidden] = useState(false);
 
-  window.onscroll = function (ev) {
-    var docHeight = document.body.offsetHeight;
-    docHeight =
-      docHeight == undefined
-        ? window.document.documentElement.scrollHeight
-        : docHeight;
+  useEffect(() => {
+    window.onscroll = function (ev) {
+      var docHeight = document.body.offsetHeight;
+      docHeight =
+        docHeight == undefined
+          ? window.document.documentElement.scrollHeight
+          : docHeight;
 
-    var winheight = window.innerHeight;
-    winheight =
-      winheight == undefined
-        ? document.documentElement.clientHeight
-        : winheight;
+      var winheight = window.innerHeight;
+      winheight =
+        winheight == undefined
+          ? document.documentElement.clientHeight
+          : winheight;
 
-    var scrollpoint = window.scrollY;
-    scrollpoint =
-      scrollpoint == undefined
-        ? window.document.documentElement.scrollTop
-        : scrollpoint;
+      var scrollpoint = window.scrollY;
+      scrollpoint =
+        scrollpoint == undefined
+          ? window.document.documentElement.scrollTop
+          : scrollpoint;
 
-    if (scrollpoint + winheight >= docHeight) {
-      setHidden(true);
-    }
-  };
+      if (scrollpoint + winheight >= docHeight) {
+        setHidden(true);
+      }
+    };
+  }, []);
 
   return (
     <div

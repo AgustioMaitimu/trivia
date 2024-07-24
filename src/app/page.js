@@ -3,7 +3,6 @@ import Circle from '@/components/Circle';
 import LoginCard from '@/components/Login';
 import Scroll from '@/components/Scroll';
 import { Lato } from 'next/font/google';
-import Image from 'next/image';
 const lato = Lato({ subsets: ['latin'], weight: '400' });
 
 export default function Home() {
