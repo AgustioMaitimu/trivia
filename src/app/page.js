@@ -1,7 +1,7 @@
-import Background from '@/components/Background';
-import Circle from '@/components/Circle';
-import LoginCard from '@/components/Login';
-import Scroll from '@/components/Scroll';
+import AccountContainer from '@/components/home/account/Container';
+import Background from '@/components/home/Background';
+import Circle from '@/components/home/Circle';
+import Scroll from '@/components/home/Scroll';
 import { Lato } from 'next/font/google';
 const lato = Lato({ subsets: ['latin'], weight: '400' });
 
@@ -13,7 +13,7 @@ export default function Home() {
       <Circle />
       <Background />
       <div className="h-screen w-screen bg-transparent"></div>
-      <LoginCard />
+      <AccountContainer />
       <Scroll />
     </main>
   );
