@@ -7,7 +7,7 @@ import Image from 'next/image';
 const doodle = Caveat_Brush({ subsets: ['latin'], weight: '400' });
 
 function Background() {
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const [scrollPosition, setScrollPosition] = useState(window.scrollY);
 
   useEffect(() => {
     const handleScroll = () => {
