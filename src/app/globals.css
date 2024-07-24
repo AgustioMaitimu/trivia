@@ -16,3 +16,58 @@ html::-webkit-scrollbar {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
+
+.circle {
+  height: 80px;
+  width: 80px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin-top: 30px;
+  margin-left: 30px;
+  animation: effect 8s linear infinite;
+}
+
+@keyframes effect {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.circle span {
+  position: absolute;
+  left: 50%;
+  transform-origin: 0 40px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 800;
+  text-transform: capitalize;
+  color: #30281c;
+  font-size: 7.5px;
+}
+
+@media only screen and (min-width: 640px) {
+  .circle {
+    height: 110px;
+    width: 110px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin-top: 30px;
+    margin-left: 30px;
+    animation: effect 8s linear infinite;
+  }
+
+  .circle span {
+    position: absolute;
+    left: 50%;
+    transform-origin: 0 55px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 800;
+    text-transform: capitalize;
+    color: #30281c;
+    font-size: 10px;
+  }
+}
