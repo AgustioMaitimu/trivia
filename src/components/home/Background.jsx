@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Caveat_Brush } from 'next/font/google';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 
 const doodle = Caveat_Brush({ subsets: ['latin'], weight: '400' });
 
