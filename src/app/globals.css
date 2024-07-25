@@ -28,15 +28,6 @@ html::-webkit-scrollbar {
   animation: effect 8s linear infinite;
 }
 
-@keyframes effect {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 .circle span {
   position: absolute;
   left: 50%;
@@ -45,6 +36,15 @@ html::-webkit-scrollbar {
   text-transform: capitalize;
   color: #30281c;
   font-size: 7.5px;
+}
+
+@keyframes effect {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @media only screen and (min-width: 640px) {

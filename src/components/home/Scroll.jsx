@@ -37,6 +37,7 @@ function Scroll() {
       className={`${hidden && 'hidden'} fixed bottom-4 right-4 z-0 aspect-square w-20 md:w-32`}
     >
       <Image
+        unoptimized
         alt="loading"
         src="/scroll.gif"
         className="object-cover"

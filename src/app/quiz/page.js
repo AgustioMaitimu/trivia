@@ -1,18 +1,32 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import Loading from '@/components/quiz/Loading';
+import QuizMain from '@/components/quiz/QuizMain';
+import Redirect from '@/components/quiz/Redirect';
+import { useSession } from 'next-auth/react';
+import React, { useState, useEffect } from 'react';
 
 function Quiz() {
-  const [triviaExists, setTriviaExists] = useState(false);
+  const { data: session, status } = useSession();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const trivia = localStorage.getItem('tio-trivia-login');
-    if (trivia) {
-      setTriviaExists(true);
+    if (status === 'loading') {
+      return;
     }
-  }, []);
 
-  return <div>{triviaExists ? <div>Yes</div> : <div>No</div>}</div>;
+    if (!session) {
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
+  }, [session, status]);
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  return session ? <QuizMain /> : <Redirect />;
 }
 
 export default Quiz;
