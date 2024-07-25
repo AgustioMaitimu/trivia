@@ -38,6 +38,10 @@ html::-webkit-scrollbar {
   font-size: 7.5px;
 }
 
+.challenge {
+  box-shadow: inset 0 -0.5em 0 0 #f3bd73;
+}
+
 @keyframes effect {
   0% {
     transform: rotate(0deg);
