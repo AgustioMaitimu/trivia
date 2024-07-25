@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { signIn, useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 function Login() {
   const { data, status } = useSession();
@@ -30,9 +31,12 @@ function Login() {
             Sign In with Google
           </button>
           {userName && (
-            <button className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#4285F4] px-4 py-2 text-white hover:bg-[#357ae8]">
+            <Link
+              href="/quiz"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#4285F4] px-4 py-2 text-white hover:bg-[#357ae8]"
+            >
               Log In as {userName}
-            </button>
+            </Link>
           )}
         </div>
       </div>
