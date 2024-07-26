@@ -11,6 +11,10 @@ function Quiz() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!localStorage.getItem('tios-trivia')) {
+      localStorage.setItem('tios-trivia', JSON.stringify({}));
+    }
+
     if (status === 'loading') {
       return;
     }

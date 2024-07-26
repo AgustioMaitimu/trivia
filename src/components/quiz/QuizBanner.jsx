@@ -11,12 +11,12 @@ function QuizBanner() {
             Choose Your <span className="challenge font-bold">Challenge</span>
           </h1>
           <p className="mt-6 lg:mt-10 lg:text-lg">
-            Test your knowledge with our challenging quiz. Are you up for the
+            Test your knowledge with our challenging trivia. Are you up for the
             challenge?
           </p>
         </div>
         <button className="hidden w-full items-center justify-between rounded-full bg-black px-6 py-2 font-medium text-white md:flex lg:w-64">
-          Start Quiz <img src="/arrow.svg" alt="" className="h-auto w-10" />
+          Start Trivia <img src="/arrow.svg" alt="" className="h-auto w-10" />
         </button>
       </div>
       <div className="flex flex-col gap-6 md:w-[50%]">
@@ -30,7 +30,7 @@ function QuizBanner() {
           />
         </div>
         <button className="flex w-full items-center justify-between rounded-full bg-black px-7 py-2 font-medium text-white md:hidden">
-          Start Quiz <img src="/arrow.svg" alt="" className="h-auto w-10" />
+          Start Trivia <img src="/arrow.svg" alt="" className="h-auto w-10" />
         </button>
       </div>
     </div>

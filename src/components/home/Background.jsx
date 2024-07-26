@@ -10,6 +10,10 @@ function Background() {
   const [scrollPosition, setScrollPosition] = useState(0);
 
   useEffect(() => {
+    if (!localStorage.getItem('tios-trivia')) {
+      localStorage.setItem('tios-trivia', JSON.stringify({}));
+    }
+
     setScrollPosition(window.scrollY);
 
     const handleScroll = () => {
