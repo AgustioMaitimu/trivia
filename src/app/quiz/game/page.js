@@ -2,12 +2,11 @@
 'use client';
 
 import Timer from 'easytimer.js';
-import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 function GamePage(props) {
   const [timer] = useState(new Timer()); // Use state to hold Timer instance
-  const searchParams = useSearchParams();
+  const searchParams = new URLSearchParams(window.location.search);
   const [categoryName, setCategoryName] = useState();
   const [allData, setAllData] = useState();
   const [categoryData, setCategoryData] = useState();
