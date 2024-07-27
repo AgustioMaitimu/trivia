@@ -11,12 +11,19 @@ const categoryMap = {
   history: 'https://opentdb.com/api.php?amount=15&category=23&type=boolean',
 };
 
-const decodeHtmlEntities = (text) => {
+function decodeHtmlEntities(text) {
   const textarea = document.createElement('textarea');
   textarea.innerHTML = text;
   let decodedText = textarea.value;
   return decodedText.replace(/^"|"$/g, '');
-};
+}
+
+function capitalizeFirstLetter(string) {
+  return string
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
 
 const GamePage = () => {
   const [timer] = useState(new Timer());
@@ -25,6 +32,7 @@ const GamePage = () => {
   const [categoryData, setCategoryData] = useState();
   const [time, setTime] = useState();
   const [gameEnded, setGameEnded] = useState(false);
+  const [isTimerRunning, setIsTimerRunning] = useState(true); // State to track timer status
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -39,7 +47,7 @@ const GamePage = () => {
   useEffect(() => {
     if (!allData || !categoryName) return;
 
-    const fetchCategoryData = async () => {
+    async function fetchCategoryData() {
       const link = categoryMap[categoryName.toLowerCase()];
       if (link) {
         const response = await fetch(link);
@@ -52,7 +60,7 @@ const GamePage = () => {
           timer: 90,
         });
       }
-    };
+    }
 
     if (allData[categoryName]) {
       setCategoryData(allData[categoryName]);
@@ -71,8 +79,13 @@ const GamePage = () => {
       startValues: { seconds: categoryData.timer },
     });
 
-    const updateTimer = () => setTime(timer.getTotalTimeValues().seconds);
-    const handleTimerEnd = () => setGameEnded(true);
+    function updateTimer() {
+      setTime(timer.getTotalTimeValues().seconds);
+    }
+
+    function handleTimerEnd() {
+      setGameEnded(true);
+    }
 
     timer.addEventListener('secondsUpdated', updateTimer);
     timer.addEventListener('targetAchieved', handleTimerEnd);
@@ -84,13 +97,13 @@ const GamePage = () => {
   }, [categoryData, timer]);
 
   useEffect(() => {
-    const handleBeforeUnload = (event) => {
+    function handleBeforeUnload(event) {
       if (!gameEnded) {
         saveData();
       }
       event.preventDefault();
       event.returnValue = '';
-    };
+    }
 
     window.addEventListener('beforeunload', handleBeforeUnload);
 
@@ -106,7 +119,7 @@ const GamePage = () => {
     }
   }, [gameEnded]);
 
-  function handleAnswer() {
+  function handleAnswer(e) {
     const currentQuestion =
       categoryData.questions[15 - categoryData.questionsLeft];
     if (e.target.innerHTML === currentQuestion.correct_answer) {
@@ -115,6 +128,24 @@ const GamePage = () => {
       categoryData.incorrectAnswers++;
     }
     categoryData.questionsLeft--;
+  }
+
+  function handleTimeForward() {
+    timer.stop();
+    timer.start({
+      countdown: true,
+      startValues: { seconds: 5 },
+    });
+    setTime(5);
+  }
+
+  function toggleTimer() {
+    if (isTimerRunning) {
+      timer.pause();
+    } else {
+      timer.start();
+    }
+    setIsTimerRunning(!isTimerRunning);
   }
 
   function saveData() {
@@ -137,10 +168,12 @@ const GamePage = () => {
     }
   }
 
-  const capitalizeFirstLetter = (string) =>
-    string.charAt(0).toUpperCase() + string.slice(1);
-
-  if (!categoryData) return null;
+  if (!categoryData)
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        Loading...
+      </div>
+    );
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#E9E5DC] p-6">
@@ -168,12 +201,15 @@ const GamePage = () => {
           <>
             <div className="mb-6 flex gap-6">
               <h1
-                onClick={() => timer.pause()}
+                onClick={toggleTimer}
                 className="text-3xl font-bold text-[#000000]"
               >
                 {time}s
               </h1>
-              <h1 className="text-xl text-[#000000]">
+              <h1
+                onClick={handleTimeForward}
+                className="text-xl text-[#000000]"
+              >
                 {15 - categoryData.questionsLeft + 1} / 15
               </h1>
             </div>
