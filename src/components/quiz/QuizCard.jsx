@@ -1,11 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 
 function QuizCard({ subject, seconds, questions, link }) {
   const [buttonText, setButtonText] = useState('Attempt Trivia');
-  const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true); // Indicate that we are on the client side
+  }, []);
 
   useEffect(() => {
     const triviaData = localStorage.getItem('tios-trivia');
@@ -20,29 +23,10 @@ function QuizCard({ subject, seconds, questions, link }) {
     }
   }, [subject]);
 
-  async function handleClick() {
-    if (buttonText === 'Attempt Trivia') {
-      const response = await fetch(link);
-      const data = await response.json();
-
-      const categoryData = {
-        questions: data.results,
-        questionsLeft: data.results.length,
-        correctAnswers: 0,
-        incorrectAnswers: 0,
-      };
-
-      const triviaData = localStorage.getItem('tios-trivia');
-      const trivia = triviaData ? JSON.parse(triviaData) : {};
-
-      trivia[subject] = categoryData;
-
-      localStorage.setItem('tios-trivia', JSON.stringify(trivia));
+  function handleClick() {
+    if (isClient) {
+      window.location.href = `/quiz/game?category=${encodeURIComponent(subject.toLowerCase())}`;
     }
-
-    router.push(
-      `/quiz/game?category=${encodeURIComponent(subject.toLowerCase())}`,
-    );
   }
 
   return (

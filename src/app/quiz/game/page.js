@@ -1,113 +1,161 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import Timer from 'easytimer.js';
 import { useSearchParams } from 'next/navigation';
-import GameCard from '@/components/game/GameCard';
+import React, { useEffect, useState } from 'react';
 
-function GamePage() {
-  const [allData, setAllData] = useState(
-    JSON.parse(localStorage.getItem('tios-trivia')) || {},
-  );
+function GamePage(props) {
+  const [timer] = useState(new Timer()); // Use state to hold Timer instance
   const searchParams = useSearchParams();
-  const categoryParam = searchParams.get('category');
-  const [categoryData, setCategoryData] = useState(
-    allData[formatCategory(categoryParam)] || {},
-  );
-  const [timer, setTimer] = useState(new Timer());
-  const [time, setTime] = useState(90);
-  const [timerPaused, setTimerPaused] = useState(false);
-  const [isQuizEnded, setIsQuizEnded] = useState(false);
+  const [categoryName, setCategoryName] = useState();
+  const [allData, setAllData] = useState();
+  const [categoryData, setCategoryData] = useState();
+  const [time, setTime] = useState(); // State to store timer value
 
-  useEffect(() => {
-    timer.start({
-      countdown: true,
-      startValues: { seconds: categoryData?.timer || 90 }, // Set timer from categoryData or default to 90
-    });
-
-    const updateTimer = () => {
-      setTime(timer.getTotalTimeValues().seconds);
+  function getFetchLink(category) {
+    const categoryMap = {
+      'general knowledge':
+        'https://opentdb.com/api.php?amount=15&category=9&type=boolean',
+      geography:
+        'https://opentdb.com/api.php?amount=15&category=22&type=boolean',
+      history: 'https://opentdb.com/api.php?amount=15&category=23&type=boolean',
     };
 
-    timer.addEventListener('secondsUpdated', updateTimer);
+    return categoryMap[category] || 'Unknown Category';
+  }
 
-    timer.addEventListener('targetAchieved', () => {
-      if (!isQuizEnded) {
-        alertQuizStats();
-        setIsQuizEnded(true);
-      }
+  function parseCategoryName() {
+    switch (searchParams.get('category')) {
+      case 'general knowledge':
+        setCategoryName('General Knowledge');
+        break;
+      case 'geography':
+        setCategoryName('Geography');
+        break;
+      case 'history':
+        setCategoryName('History');
+        break;
+      default:
+        setCategoryName('Unknown');
+    }
+  }
+
+  function decodeHtmlEntities(text) {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = text;
+
+    let decodedText = textarea.value;
+
+    decodedText = decodedText.replace(/^"|"$/g, '');
+
+    return decodedText;
+  }
+
+  function handleAnswer(e) {
+    if (
+      e.target.innerHTML ==
+      categoryData.questions[15 - categoryData.questionsLeft].correct_answer
+    ) {
+      categoryData.correctAnswers++;
+    } else {
+      categoryData.incorrectAnswers++;
+    }
+    categoryData.questionsLeft--;
+    if (categoryData.questionsLeft == 0) {
+      alert('done');
+    }
+    console.log(
+      categoryData.correctAnswers,
+      categoryData.incorrectAnswers,
+      categoryData.questionsLeft,
+    );
+  }
+
+  async function setNewData() {
+    const link = getFetchLink(searchParams.get('category'));
+    const response = await fetch(link);
+    const responseJSON = await response.json();
+    setCategoryData({
+      questions: responseJSON.results,
+      questionsLeft: 15,
+      correctAnswers: 0,
+      incorrectAnswers: 0,
+      timer: 90,
     });
+  }
 
-    const handleBeforeUnload = (e) => {
-      if (!isQuizEnded) {
-        e.preventDefault();
-        e.returnValue = '';
-        saveGameData();
+  function saveData() {
+    console.log('reached here');
+    categoryData.timer = time;
+    const updatedAllData = { ...allData, [categoryName]: categoryData };
+    localStorage.setItem('tios-trivia', JSON.stringify(updatedAllData));
+  }
+
+  useEffect(() => {
+    parseCategoryName();
+    setAllData(JSON.parse(localStorage.getItem('tios-trivia')) || {});
+  }, []);
+
+  useEffect(() => {
+    if (allData && categoryName) {
+      if (allData[categoryName]) {
+        setCategoryData(allData[categoryName]);
+      } else {
+        setNewData();
       }
+    }
+  }, [allData, categoryName]);
+
+  useEffect(() => {
+    if (categoryData) {
+      setTime(categoryData.timer);
+
+      timer.start({
+        countdown: true,
+        startValues: { seconds: categoryData.timer },
+      });
+
+      const updateTimer = () => {
+        setTime(timer.getTotalTimeValues().seconds);
+      };
+
+      timer.addEventListener('secondsUpdated', updateTimer);
+    }
+  }, [categoryData, timer]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      saveData();
+      event.preventDefault();
+      event.returnValue = '';
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
-      timer.stop();
-      timer.removeEventListener('secondsUpdated', updateTimer);
-      timer.removeEventListener('targetAchieved');
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [timer, isQuizEnded]);
-
-  useEffect(() => {
-    setAllData((prevData) => ({
-      ...prevData,
-      [formatCategory(categoryParam)]: {
-        ...categoryData,
-        timer: time, // Add current timer value to allData
-      },
-    }));
-    saveGameData();
-  }, [categoryData, time]);
-
-  function formatCategory(category) {
-    return category
-      .replace(/\+/g, ' ')
-      .toLowerCase()
-      .replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase());
-  }
-
-  function handlePause() {
-    if (timerPaused) {
-      setTimerPaused(false);
-      timer.start();
-    } else {
-      setTimerPaused(true);
-      timer.pause();
-    }
-  }
-
-  function saveGameData() {
-    localStorage.setItem('tios-trivia', JSON.stringify(allData));
-  }
-
-  function alertQuizStats() {
-    const { questionsLeft, correctAnswers, incorrectAnswers } = categoryData;
-    alert(
-      `Quiz Over!\nQuestions Left: ${questionsLeft}\nCorrect Answers: ${correctAnswers}\nIncorrect Answers: ${incorrectAnswers}`,
-    );
-  }
+  }, [categoryData, allData, time]);
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="mb-4 cursor-pointer text-3xl" onClick={handlePause}>
-        {time}
-      </div>
-      {categoryData && !isQuizEnded && (
-        <GameCard
-          categoryData={categoryData}
-          onEnd={() => {
-            alertQuizStats();
-            setIsQuizEnded(true);
-          }}
-        />
+    <div className="max-w-screen">
+      <h1>{time}</h1>
+      {categoryData && (
+        <div>
+          <h1>
+            {decodeHtmlEntities(
+              JSON.stringify(
+                categoryData.questions[15 - categoryData.questionsLeft]
+                  .question,
+              ),
+            )}
+          </h1>
+          <div className="flex gap-4">
+            <button onClick={(e) => handleAnswer(e)}>True</button>
+            <button onClick={(e) => handleAnswer(e)}>False</button>
+          </div>
+        </div>
       )}
     </div>
   );
