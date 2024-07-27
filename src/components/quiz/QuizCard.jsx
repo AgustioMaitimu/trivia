@@ -26,14 +26,15 @@ function QuizCard({ subject, seconds, questions, link }) {
   }, [redirect, subject]);
 
   return (
-    <div className="flex h-48 w-full flex-col justify-between rounded-2xl bg-[#F2BC71] p-6 md:w-[31%] xl:w-[28%]">
+    <div className="flex h-48 w-full flex-col justify-between rounded-2xl bg-[#F2BC71] p-6 md:w-[31%] xl:w-[30%]">
       <h1 className="text-2xl font-semibold">{subject}</h1>
       <div className="-mt-2 flex flex-col gap-1 text-sm">
         <p>• {seconds} Seconds</p>
         <p>• {questions} Questions</p>
       </div>
       <button
-        className="rounded-lg bg-black py-3 text-white"
+        className={`hover:text-gray-100' rounded-lg bg-black py-3
+             font-medium text-white transition-colors duration-300 hover:bg-gray-800`}
         onClick={() => setRedirect(true)}
       >
         {buttonText}

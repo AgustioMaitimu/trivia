@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import Timer from 'easytimer.js';
@@ -141,23 +140,43 @@ function GamePage(props) {
   }, [categoryData, allData, time]);
 
   return (
-    <div className="max-w-screen">
-      <h1>{time}</h1>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#E9E5DC] p-6">
       {categoryData && (
-        <div>
-          <h1>
-            {decodeHtmlEntities(
-              JSON.stringify(
+        <>
+          <div className="mb-6 flex gap-6">
+            <h1
+              onClick={() => timer.pause()}
+              className="text-3xl font-bold text-[#000000]"
+            >
+              {time}s
+            </h1>
+            <h1 className="text-xl text-[#000000]">
+              {15 - categoryData.questionsLeft + 1} / 15
+            </h1>
+          </div>
+          <div className="w-full max-w-md rounded-lg bg-[#F2BC71] p-6 text-[#000000] shadow-lg">
+            <h2 className="mb-4 text-center text-lg font-medium">
+              {decodeHtmlEntities(
                 categoryData.questions[15 - categoryData.questionsLeft]
                   .question,
-              ),
-            )}
-          </h1>
-          <div className="flex gap-4">
-            <button onClick={(e) => handleAnswer(e)}>True</button>
-            <button onClick={(e) => handleAnswer(e)}>False</button>
+              )}
+            </h2>
+            <div className="flex justify-center gap-4">
+              <button
+                className="rounded-lg bg-[#E9E5DC] px-4 py-2 text-[#000000] shadow-md transition duration-300 hover:bg-[#d1c5b5]"
+                onClick={handleAnswer}
+              >
+                True
+              </button>
+              <button
+                className="rounded-lg bg-[#E9E5DC] px-4 py-2 text-[#000000] shadow-md transition duration-300 hover:bg-[#d1c5b5]"
+                onClick={handleAnswer}
+              >
+                False
+              </button>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
