@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react';
 
 function GamePage(props) {
   const [timer] = useState(new Timer()); // Use state to hold Timer instance
-  const searchParams = new URLSearchParams(window.location.search);
   const [categoryName, setCategoryName] = useState();
   const [allData, setAllData] = useState();
   const [categoryData, setCategoryData] = useState();
@@ -22,22 +21,6 @@ function GamePage(props) {
     };
 
     return categoryMap[category] || 'Unknown Category';
-  }
-
-  function parseCategoryName() {
-    switch (searchParams.get('category')) {
-      case 'general knowledge':
-        setCategoryName('General Knowledge');
-        break;
-      case 'geography':
-        setCategoryName('Geography');
-        break;
-      case 'history':
-        setCategoryName('History');
-        break;
-      default:
-        setCategoryName('Unknown');
-    }
   }
 
   function decodeHtmlEntities(text) {
@@ -71,19 +54,6 @@ function GamePage(props) {
     );
   }
 
-  async function setNewData() {
-    const link = getFetchLink(searchParams.get('category'));
-    const response = await fetch(link);
-    const responseJSON = await response.json();
-    setCategoryData({
-      questions: responseJSON.results,
-      questionsLeft: 15,
-      correctAnswers: 0,
-      incorrectAnswers: 0,
-      timer: 90,
-    });
-  }
-
   function saveData() {
     console.log('reached here');
     categoryData.timer = time;
@@ -92,11 +62,44 @@ function GamePage(props) {
   }
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    function parseCategoryName() {
+      switch (searchParams.get('category')) {
+        case 'general knowledge':
+          setCategoryName('General Knowledge');
+          break;
+        case 'geography':
+          setCategoryName('Geography');
+          break;
+        case 'history':
+          setCategoryName('History');
+          break;
+        default:
+          setCategoryName('Unknown');
+      }
+    }
+
     parseCategoryName();
     setAllData(JSON.parse(localStorage.getItem('tios-trivia')) || {});
   }, []);
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    async function setNewData() {
+      const link = getFetchLink(searchParams.get('category'));
+      const response = await fetch(link);
+      const responseJSON = await response.json();
+      setCategoryData({
+        questions: responseJSON.results,
+        questionsLeft: 15,
+        correctAnswers: 0,
+        incorrectAnswers: 0,
+        timer: 90,
+      });
+    }
+
     if (allData && categoryName) {
       if (allData[categoryName]) {
         setCategoryData(allData[categoryName]);
