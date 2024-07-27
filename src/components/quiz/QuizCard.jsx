@@ -4,11 +4,7 @@ import React, { useState, useEffect } from 'react';
 
 function QuizCard({ subject, seconds, questions, link }) {
   const [buttonText, setButtonText] = useState('Attempt Trivia');
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true); // Indicate that we are on the client side
-  }, []);
+  const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
     const triviaData = localStorage.getItem('tios-trivia');
@@ -23,11 +19,11 @@ function QuizCard({ subject, seconds, questions, link }) {
     }
   }, [subject]);
 
-  function handleClick() {
-    if (isClient) {
+  useEffect(() => {
+    if (redirect) {
       window.location.href = `/quiz/game?category=${encodeURIComponent(subject.toLowerCase())}`;
     }
-  }
+  }, [redirect, subject]);
 
   return (
     <div className="flex h-48 w-full flex-col justify-between rounded-2xl bg-[#F2BC71] p-6 md:w-[31%] xl:w-[28%]">
@@ -38,7 +34,7 @@ function QuizCard({ subject, seconds, questions, link }) {
       </div>
       <button
         className="rounded-lg bg-black py-3 text-white"
-        onClick={handleClick}
+        onClick={() => setRedirect(true)}
       >
         {buttonText}
       </button>
